@@ -4,7 +4,10 @@ import com.google.gson.Gson;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.Value;
 import okhttp3.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -15,6 +18,11 @@ import java.io.IOException;
 @RestController
 @CrossOrigin("*")
 public class HttpController {
+
+    @Autowired
+    private Environment environment;
+
+    String token = environment.getProperty("bearer.token");
 
     @GetMapping("/match")
     public Object getMatches() throws IOException {
@@ -27,10 +35,10 @@ public class HttpController {
                 .url("http://api.cup2022.ir/api/v1/match")
                 .get()
                 .addHeader("Content-Type", "application/json")
-                .addHeader("Authorization", "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MzdjOTY4MDQ4NzA5MjMzZmQ5NGViNGYiLCJpYXQiOjE2NjkxMDk0OTQsImV4cCI6MTY2OTE5NTg5NH0.X9l_m2ykjSqH__UBU-EkpTEP9oE9nDnGAwjOqzZPc8E")
+                .addHeader("Authorization", "Bearer " + token)
                 .build();
         Response response = client.newCall(request).execute();
-        System.out.println(response.body().toString());
+        System.out.println(response.header("status").toString());
         Gson gson = new Gson();
         SimpleEntity entity = gson.fromJson(response.body().string(), SimpleEntity.class);
         return entity;
@@ -45,7 +53,7 @@ public class HttpController {
                 .url("http://api.cup2022.ir/api/v1/match/" + id)
                 .get()
                 .addHeader("Content-Type", "application/json")
-                .addHeader("Authorization", "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MzdjOTY4MDQ4NzA5MjMzZmQ5NGViNGYiLCJpYXQiOjE2NjkxMDk0OTQsImV4cCI6MTY2OTE5NTg5NH0.X9l_m2ykjSqH__UBU-EkpTEP9oE9nDnGAwjOqzZPc8E")
+                .addHeader("Authorization", "Bearer " + token)
                 .build();
         Response response = client.newCall(request).execute();
         Gson gson = new Gson();
@@ -62,7 +70,7 @@ public class HttpController {
                 .url("http://api.cup2022.ir/api/v1/standings")
                 .get()
                 .addHeader("Content-Type", "application/json")
-                .addHeader("Authorization", "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MzdjOTY4MDQ4NzA5MjMzZmQ5NGViNGYiLCJpYXQiOjE2NjkxMDk0OTQsImV4cCI6MTY2OTE5NTg5NH0.X9l_m2ykjSqH__UBU-EkpTEP9oE9nDnGAwjOqzZPc8E")
+                .addHeader("Authorization", "Bearer "+ token)
                 .build();
         Response response = client.newCall(request).execute();
         Gson gson = new Gson();
