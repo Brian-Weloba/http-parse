@@ -39,7 +39,6 @@ public class HttpController {
                 .addHeader("Authorization", "Bearer " + token)
                 .build();
         Response response = client.newCall(request).execute();
-        System.out.println(response.header("status").toString());
         Gson gson = new Gson();
         SimpleEntity entity = gson.fromJson(response.body().string(), SimpleEntity.class);
         return entity;
