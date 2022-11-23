@@ -19,10 +19,11 @@ import java.io.IOException;
 @CrossOrigin("*")
 public class HttpController {
 
-    @Autowired
-    private Environment environment;
+//    @Autowired
+//    private Environment environment;
 
-    String token = environment.getProperty("bearer.token");
+    //    String token = environment.getProperty("bearer.token");
+    String token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MzdjOTY4MDQ4NzA5MjMzZmQ5NGViNGYiLCJpYXQiOjE2NjkxOTY0NTAsImV4cCI6MTY2OTI4Mjg1MH0.85EM-9rxvroNuYlKFTSFt3icAgaEZAK-9aUDTYGQX7k";
 
     @GetMapping("/match")
     public Object getMatches() throws IOException {
@@ -70,7 +71,7 @@ public class HttpController {
                 .url("http://api.cup2022.ir/api/v1/standings")
                 .get()
                 .addHeader("Content-Type", "application/json")
-                .addHeader("Authorization", "Bearer "+ token)
+                .addHeader("Authorization", "Bearer " + token)
                 .build();
         Response response = client.newCall(request).execute();
         Gson gson = new Gson();
