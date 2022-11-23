@@ -5,13 +5,16 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import okhttp3.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
+import java.util.Objects;
 
 @RestController
+@CrossOrigin("*")
 public class HttpController {
 
     @GetMapping("/match")
@@ -19,8 +22,6 @@ public class HttpController {
 
         OkHttpClient client = new OkHttpClient().newBuilder()
                 .build();
-        MediaType mediaType = MediaType.parse("application/json");
-//        RequestBody body = RequestBody.create(mediaType, "");
         Request request = new Request.Builder()
                 .url("http://api.cup2022.ir/api/v1/match/")
                 .get()
@@ -28,10 +29,9 @@ public class HttpController {
                 .addHeader("Authorization", "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MzdjOTY4MDQ4NzA5MjMzZmQ5NGViNGYiLCJpYXQiOjE2NjkxMDk0OTQsImV4cCI6MTY2OTE5NTg5NH0.X9l_m2ykjSqH__UBU-EkpTEP9oE9nDnGAwjOqzZPc8E")
                 .build();
         Response response = client.newCall(request).execute();
-        System.out.println(response.body().toString());
+        System.out.println(Objects.requireNonNull(response.body()).toString());
         Gson gson = new Gson();
-        SimpleEntity entity = gson.fromJson(response.body().string(), SimpleEntity.class);
-        return entity;
+        return gson.fromJson(Objects.requireNonNull(response.body()).string(), SimpleEntity.class);
     }
 
     @GetMapping("/match/{id}")
@@ -40,7 +40,7 @@ public class HttpController {
                 .build();
         MediaType mediaType = MediaType.parse("application/json");
         Request request = new Request.Builder()
-                .url("http://api.cup2022.ir/api/v1/match/"+id)
+                .url("http://api.cup2022.ir/api/v1/match/" + id)
                 .get()
                 .addHeader("Content-Type", "application/json")
                 .addHeader("Authorization", "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MzdjOTY4MDQ4NzA5MjMzZmQ5NGViNGYiLCJpYXQiOjE2NjkxMDk0OTQsImV4cCI6MTY2OTE5NTg5NH0.X9l_m2ykjSqH__UBU-EkpTEP9oE9nDnGAwjOqzZPc8E")
