@@ -26,6 +26,24 @@ public class HttpController {
     //    String token = environment.getProperty("bearer.token");
     private static String token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MzdjOTY4MDQ4NzA5MjMzZmQ5NGViNGYiLCJpYXQiOjE2NjkyODY0MzEsImV4cCI6MTY2OTM3MjgzMX0.4Z9vbRC3zoycpH-hwyQCpMsfpqkpCQ_SshZZKzAneak";
 
+   @GetMapping("/match/live")
+   public Object getLiveMatch() throws IOException {
+       OkHttpClient client = new OkHttpClient().newBuilder()
+               .build();
+
+       Request request = new Request.Builder()
+               .url("https://iot.fbiego.com/worldcup/")
+               .get()
+               .addHeader("Content-Type", "application/json")
+               .build();
+       Response response = client.newCall(request).execute();
+       System.out.println(response.code());
+       Gson gson = new Gson();
+       SimpleEntity2 entity = gson.fromJson(response.body().charStream(), SimpleEntity2.class);
+       System.out.println(entity);
+       return entity;
+   }
+
     @GetMapping("/match")
     public Object getMatches() throws IOException {
 
@@ -114,12 +132,12 @@ public class HttpController {
     @Setter
     @NoArgsConstructor
     private class SimpleEntity2 {
-        protected String status;
-        protected HashMap<String, String> data = new HashMap<>();
+        protected int time;
+        protected HashMap<String, Object> match = new HashMap<>();
 
-        public SimpleEntity2(String status, HashMap<String, String> data) {
-            this.status = status;
-            this.data = data;
+        public SimpleEntity2(int time, HashMap<String, Object> match) {
+            this.time = time;
+            this.match = match;
 
         }
     }
