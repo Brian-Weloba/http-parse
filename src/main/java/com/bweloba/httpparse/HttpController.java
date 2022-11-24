@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
+import java.util.HashMap;
 
 @RestController
 @CrossOrigin("*")
@@ -23,15 +24,14 @@ public class HttpController {
 //    private Environment environment;
 
     //    String token = environment.getProperty("bearer.token");
-    String token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MzdjOTY4MDQ4NzA5MjMzZmQ5NGViNGYiLCJpYXQiOjE2NjkxOTY0NTAsImV4cCI6MTY2OTI4Mjg1MH0.85EM-9rxvroNuYlKFTSFt3icAgaEZAK-9aUDTYGQX7k";
+    private static String token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MzdjOTY4MDQ4NzA5MjMzZmQ5NGViNGYiLCJpYXQiOjE2NjkyODY0MzEsImV4cCI6MTY2OTM3MjgzMX0.4Z9vbRC3zoycpH-hwyQCpMsfpqkpCQ_SshZZKzAneak";
 
     @GetMapping("/match")
     public Object getMatches() throws IOException {
 
         OkHttpClient client = new OkHttpClient().newBuilder()
                 .build();
-        MediaType mediaType = MediaType.parse("application/json");
-//        RequestBody body = RequestBody.create(mediaType, "");
+
         Request request = new Request.Builder()
                 .url("http://api.cup2022.ir/api/v1/match")
                 .get()
@@ -41,6 +41,24 @@ public class HttpController {
         Response response = client.newCall(request).execute();
         Gson gson = new Gson();
         SimpleEntity entity = gson.fromJson(response.body().string(), SimpleEntity.class);
+
+//        if (response.code() == 401) {
+//            System.out.println("token ::" + this.token);
+//            MediaType mediaType = MediaType.parse("application/json");
+//            RequestBody body = RequestBody.create(mediaType, "{\r\n\"email\": \"bweloba@gmail.com\",\r\n\"password\": \"Nyongesa4\"\r\n}");
+//            request = new Request.Builder()
+//                    .url("http://api.cup2022.ir/api/v1/user/login")
+//                    .method("POST", body)
+//                    .addHeader("Content-Type", "application/json")
+//                    .build();
+//            response = client.newCall(request).execute();
+//            gson = new Gson();
+//            SimpleEntity2 entity2 = gson.fromJson(response.body().string(), SimpleEntity2.class);
+//            this.token = entity2.data.get("token");
+//            System.out.println("token2 ::" + this.token);
+//            this.getMatches();
+//            return entity;
+//        }
         return entity;
     }
 
@@ -86,6 +104,20 @@ public class HttpController {
         protected Object data;
 
         public SimpleEntity(String status, Object data) {
+            this.status = status;
+            this.data = data;
+
+        }
+    }
+
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    private class SimpleEntity2 {
+        protected String status;
+        protected HashMap<String, String> data = new HashMap<>();
+
+        public SimpleEntity2(String status, HashMap<String, String> data) {
             this.status = status;
             this.data = data;
 
