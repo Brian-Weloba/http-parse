@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.concurrent.TimeUnit;
 
 @RestController
 @CrossOrigin("*")
@@ -47,8 +48,16 @@ public class HttpController {
     @GetMapping("/match")
     public Object getMatches() throws IOException {
 
-        OkHttpClient client = new OkHttpClient().newBuilder()
-                .build();
+//        OkHttpClient client = new OkHttpClient().newBuilder()
+//                .build();
+
+        OkHttpClient.Builder builder = new OkHttpClient.Builder();
+        builder.connectTimeout(5, TimeUnit.MINUTES) // connect timeout
+                .writeTimeout(5, TimeUnit.MINUTES) // write timeout
+                .readTimeout(5, TimeUnit.MINUTES); // read timeout
+
+        OkHttpClient client = builder.build();
+
 
         Request request = new Request.Builder()
                 .url("http://api.cup2022.ir/api/v1/match")
@@ -56,6 +65,7 @@ public class HttpController {
                 .addHeader("Content-Type", "application/json")
                 .addHeader("Authorization", "Bearer " + token)
                 .build();
+
         Response response = client.newCall(request).execute();
         Gson gson = new Gson();
         SimpleEntity entity = gson.fromJson(response.body().string(), SimpleEntity.class);
