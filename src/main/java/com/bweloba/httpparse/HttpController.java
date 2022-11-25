@@ -25,25 +25,25 @@ public class HttpController {
 //    private Environment environment;
 
     //    String token = environment.getProperty("bearer.token");
-    private static String token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MzdjOTY4MDQ4NzA5MjMzZmQ5NGViNGYiLCJpYXQiOjE2NjkyODY0MzEsImV4cCI6MTY2OTM3MjgzMX0.4Z9vbRC3zoycpH-hwyQCpMsfpqkpCQ_SshZZKzAneak";
+    private static String token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MzdjOTY4MDQ4NzA5MjMzZmQ5NGViNGYiLCJpYXQiOjE2NjkzNzgxODAsImV4cCI6MTY2OTQ2NDU4MH0.mTXvTGj72yfmhASNLBTcyYmM0NM-aXWKSn2HIK2GAzw";
 
-   @GetMapping("/match/live")
-   public Object getLiveMatch() throws IOException {
-       OkHttpClient client = new OkHttpClient().newBuilder()
-               .build();
+    @GetMapping("/match/live")
+    public Object getLiveMatch() throws IOException {
+        OkHttpClient client = new OkHttpClient().newBuilder()
+                .build();
 
-       Request request = new Request.Builder()
-               .url("https://iot.fbiego.com/worldcup/")
-               .get()
-               .addHeader("Content-Type", "application/json")
-               .build();
-       Response response = client.newCall(request).execute();
-       System.out.println(response.code());
-       Gson gson = new Gson();
-       SimpleEntity2 entity = gson.fromJson(response.body().charStream(), SimpleEntity2.class);
-       System.out.println(entity);
-       return entity;
-   }
+        Request request = new Request.Builder()
+                .url("https://iot.fbiego.com/worldcup/")
+                .get()
+                .addHeader("Content-Type", "application/json")
+                .build();
+        Response response = client.newCall(request).execute();
+        System.out.println(response.code());
+        Gson gson = new Gson();
+        SimpleEntity2 entity = gson.fromJson(response.body().charStream(), SimpleEntity2.class);
+        System.out.println(entity);
+        return entity;
+    }
 
     @GetMapping("/match")
     public Object getMatches() throws IOException {
@@ -67,6 +67,8 @@ public class HttpController {
                 .build();
 
         Response response = client.newCall(request).execute();
+
+        System.out.println(response.code());
         Gson gson = new Gson();
         SimpleEntity entity = gson.fromJson(response.body().string(), SimpleEntity.class);
 
@@ -81,8 +83,8 @@ public class HttpController {
 //                    .build();
 //            response = client.newCall(request).execute();
 //            gson = new Gson();
-//            SimpleEntity2 entity2 = gson.fromJson(response.body().string(), SimpleEntity2.class);
-//            this.token = entity2.data.get("token");
+//            SimpleEntity3 entity3 = gson.fromJson(response.body().string(), SimpleEntity3.class);
+//            this.token = (String) entity3.data.get("token");
 //            System.out.println("token2 ::" + this.token);
 //            this.getMatches();
 //            return entity;
@@ -148,6 +150,20 @@ public class HttpController {
         public SimpleEntity2(int time, HashMap<String, Object> match) {
             this.time = time;
             this.match = match;
+
+        }
+    }
+
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    private class SimpleEntity3 {
+        protected String status;
+        protected HashMap<String, Object> data;
+
+        public SimpleEntity3(String status, HashMap<String, Object> data) {
+            this.status = status;
+            this.data = data;
 
         }
     }
