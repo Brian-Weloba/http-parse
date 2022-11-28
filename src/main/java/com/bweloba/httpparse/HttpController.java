@@ -4,10 +4,10 @@ import com.google.gson.Gson;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.Value;
-import okhttp3.*;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.env.Environment;
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -25,7 +25,7 @@ public class HttpController {
 //    private Environment environment;
 
     //    String token = environment.getProperty("bearer.token");
-    private static String token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MzdjOTY4MDQ4NzA5MjMzZmQ5NGViNGYiLCJpYXQiOjE2Njk1MzA4MzUsImV4cCI6MTY2OTYxNzIzNX0.xqxpoU2ysGWA3h-McRoUkhI5N25fb3qsON2My0tQoGg";
+    private static final String token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MzdjOTY4MDQ4NzA5MjMzZmQ5NGViNGYiLCJpYXQiOjE2Njk2MjkxMDYsImV4cCI6MTY2OTcxNTUwNn0.9seUrxIry4rxabKB25CHN0usjFBhQMJaxn1RZY_MfnM";
     @GetMapping("/match/live")
     public Object getLiveMatch() throws IOException {
         OkHttpClient client = new OkHttpClient().newBuilder()
@@ -71,23 +71,23 @@ public class HttpController {
         Gson gson = new Gson();
         SimpleEntity entity = gson.fromJson(response.body().string(), SimpleEntity.class);
 
-        if (response.code() == 401) {
-            System.out.println("token ::" + this.token);
-            MediaType mediaType = MediaType.parse("application/json");
-            RequestBody body = RequestBody.create(mediaType, "{\r\n\"email\": \"bweloba@gmail.com\",\r\n\"password\": \"Nyongesa4\"\r\n}");
-            request = new Request.Builder()
-                    .url("http://api.cup2022.ir/api/v1/user/login")
-                    .method("POST", body)
-                    .addHeader("Content-Type", "application/json")
-                    .build();
-            response = client.newCall(request).execute();
-            gson = new Gson();
-            SimpleEntity3 entity3 = gson.fromJson(response.body().string(), SimpleEntity3.class);
-            this.token = (String) entity3.data.get("token");
-            System.out.println("token2 ::" + this.token);
-            this.getMatches();
-            return entity;
-        }
+//        if (response.code() == 401) {
+//            System.out.println("token ::" + this.token);
+//            MediaType mediaType = MediaType.parse("application/json");
+//            RequestBody body = RequestBody.create(mediaType, "{\r\n\"email\": \"bweloba@gmail.com\",\r\n\"password\": \"Nyongesa4\"\r\n}");
+//            request = new Request.Builder()
+//                    .url("http://api.cup2022.ir/api/v1/user/login")
+//                    .method("POST", body)
+//                    .addHeader("Content-Type", "application/json")
+//                    .build();
+//            response = client.newCall(request).execute();
+//            gson = new Gson();
+//            SimpleEntity3 entity3 = gson.fromJson(response.body().string(), SimpleEntity3.class);
+//            this.token = (String) entity3.data.get("token");
+//            System.out.println("token2 ::" + this.token);
+//            this.getMatches();
+//            return entity;
+//        }
         return entity;
     }
 
