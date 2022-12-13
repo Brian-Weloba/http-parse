@@ -1,5 +1,7 @@
 package com.bweloba.httpparse;
 
+import com.bweloba.httpparse.models.Token;
+import com.bweloba.httpparse.models.TokenService;
 import com.google.gson.Gson;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -9,9 +11,12 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -24,11 +29,9 @@ import java.util.concurrent.TimeUnit;
 @CrossOrigin("*")
 public class HttpController {
 
-//    @Autowired
-//    private Environment environment;
+    @Autowired
+    TokenService tokenService;
 
-    //    String token = environment.getProperty("bearer.token");
-    private static String token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MzdjOTY4MDQ4NzA5MjMzZmQ5NGViNGYiLCJpYXQiOjE2NzA1NjY2ODYsImV4cCI6MTY3MDY1MzA4Nn0.WgaTeOyOCbZkUVutiIb0POwLfY7pJV-OVdd1LhMaLPw";
     @GetMapping("/match/live")
     public Object getLiveMatch() throws IOException {
         OkHttpClient client = new OkHttpClient().newBuilder()
@@ -49,9 +52,8 @@ public class HttpController {
 
     @GetMapping("/match")
     public Object getMatches() throws IOException {
-
-//        OkHttpClient client = new OkHttpClient().newBuilder()
-//                .build();
+        // tokenService.updateToken("initialize");
+        String token = tokenService.getTokenById(1).getToken();
 
         OkHttpClient.Builder builder = new OkHttpClient.Builder();
         builder.connectTimeout(5, TimeUnit.MINUTES) // connect timeout
@@ -59,7 +61,6 @@ public class HttpController {
                 .readTimeout(5, TimeUnit.MINUTES); // read timeout
 
         OkHttpClient client = builder.build();
-
 
         Request request = new Request.Builder()
                 .url("http://api.cup2022.ir/api/v1/match")
@@ -74,28 +75,32 @@ public class HttpController {
         Gson gson = new Gson();
         SimpleEntity entity = gson.fromJson(response.body().string(), SimpleEntity.class);
 
-    //    if (response.code() == 401) {
-    //        System.out.println("token ::" + HttpController.token);
-    //        MediaType mediaType = MediaType.parse("application/json");
-    //        RequestBody body = RequestBody.create(mediaType, "{\r\n\"email\": \"bweloba@gmail.com\",\r\n\"password\": \"Nyongesa4\"\r\n}");
-    //        request = new Request.Builder()
-    //                .url("http://api.cup2022.ir/api/v1/user/login")
-    //                .method("POST", body)
-    //                .addHeader("Content-Type", "application/json")
-    //                .build();
-    //        response = client.newCall(request).execute();
-    //        gson = new Gson();
-    //        SimpleEntity3 entity3 = gson.fromJson(response.body().string(), SimpleEntity3.class);
-    //        HttpController.token = (String) entity3.data.get("token");
-    //        System.out.println("token2 ::" + HttpController.token);
-    //        this.getMatches();
-    //        return entity;
-    //    }
+        if (response.code() == 401) {
+            System.out.println("token ::" + token);
+            MediaType mediaType = MediaType.parse("application/json");
+            RequestBody body = RequestBody.create(mediaType,
+                    "{\r\n\"email\": \"bweloba@gmail.com\",\r\n\"password\": \"Nyongesa4\"\r\n}");
+            request = new Request.Builder()
+                    .url("http://api.cup2022.ir/api/v1/user/login")
+                    .method("POST", body)
+                    .addHeader("Content-Type", "application/json")
+                    .build();
+            response = client.newCall(request).execute();
+            gson = new Gson();
+            SimpleEntity3 entity3 = gson.fromJson(response.body().string(),
+                    SimpleEntity3.class);
+            // HttpController.token = (String) entity3.data.get("token");
+            System.out.println("token2 ::" + (String) entity3.data.get("token"));
+            tokenService.updateToken((String) entity3.data.get("token"));
+            this.getMatches();
+            return entity;
+        }
         return entity;
     }
 
     @GetMapping("/match/{id}")
     public Object getMatchById(@PathVariable int id) throws IOException {
+        String token = tokenService.getTokenById(1).getToken();
         OkHttpClient client = new OkHttpClient().newBuilder()
                 .build();
         Request request = new Request.Builder()
@@ -112,6 +117,7 @@ public class HttpController {
 
     @GetMapping("/standings")
     public Object getStandings() throws IOException {
+        String token = tokenService.getTokenById(1).getToken();
         OkHttpClient client = new OkHttpClient().newBuilder()
                 .build();
         Request request = new Request.Builder()
