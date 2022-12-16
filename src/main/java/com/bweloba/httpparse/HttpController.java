@@ -25,7 +25,7 @@ import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
 
 @RestController
-@RequestMapping("/test")
+// @RequestMapping("/test")
 @CrossOrigin("*")
 public class HttpController {
 
