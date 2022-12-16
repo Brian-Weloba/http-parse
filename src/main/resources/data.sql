@@ -1,1 +1,1 @@
-INSERT INTO Token (token) VALUES ('Init');
+INSERT INTO Token (Id,token) VALUES (1,'Init');
